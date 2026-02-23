@@ -50,11 +50,11 @@ $$
 
 ### Mass-Dependent Geometry
 $$
-l_\text{com}(m) = \frac{m_\text{dry} \cdot l_\text{dry} + (m - m_\text{dry}) \cdot l_\text{fuel}}{m}
+d_\text{com}(m) = \frac{m_\text{dry} \cdot d_\text{dry} + (m - m_\text{dry}) \cdot d_\text{fuel}}{m}
 $$
 
 $$
-I_z(m) = I_\text{dry,cm} + m_\text{dry}(l_\text{dry} - l_\text{com}(m))^2 + I_\text{fuel,cm}(m) + (m - m_\text{dry})(l_\text{fuel} - l_\text{com}(m))^2
+I_z(m) = I_\text{dry,cm} + m_\text{dry}(d_\text{dry} - d_\text{com}(m))^2 + I_\text{fuel,cm}(m) + (m - m_\text{dry})(d_\text{fuel} - d_\text{com}(m))^2
 $$
 
 where $I_\text{dry,cm} = \frac{1}{12} m_\text{dry} h_\text{rocket}^2$ and $I_\text{fuel,cm}(m) = \frac{1}{12} (m - m_\text{dry}) h_\text{fuel}^2$ (0 if no fuel remains).
