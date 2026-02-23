@@ -1,5 +1,5 @@
 # Rocket Control Simulation
-This repository contains a **direct collocation** solver (trapezoidal method + CasADi + IPOPT) for a 2D rocket landing problem with variable mass, moving center of mass, and thrust vector control via gimbal.
+This repository contains a **direct collocation** solver (trapezoidal method + CasADi + IPOPT) for a 2D rocket landing problem with variable mass, moving center of mass, and thrust vector control via gimbal. It also includes animations and diagnostic plots for the calculated solutions.
 
 # The Problem
 Consider a rocket whose engine can tilt a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$. Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
@@ -167,8 +167,8 @@ The problem is discretized using **trapezoidal collocation** with $N=40$ interva
 
 
 # Approach
-Since solving the full problem from scratch was quite indimidating, the problem was broken down into:
+Since solving the full problem from scratch was quite indimidating, the problem was broken down into three steps:
 
-1. A 1D Problem: Consider a falling rocket in a gravitational field (only y-component, no angular deviations). Find a thrust control which lands the rocket with zero velocity.
-2. Rotational dynamics: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Assume the engine can gimbal. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t$.
+1. The 1D Problem: Consider a falling rocket in a gravitational field (only y-component, no angular deviations). Find a thrust control which lands the rocket with zero velocity.
+2. Rotational dynamics: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t.
 3. Combine the dynamics --> Solve the full 2D Problem.
