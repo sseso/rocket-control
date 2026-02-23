@@ -2,7 +2,7 @@
 This repository contains a **direct collocation** solver (trapezoidal method + CasADi + IPOPT) for a 2D rocket landing problem with variable mass, moving center of mass, and thrust vector control via gimbal.
 
 # The Problem
-Consider a rocket whose engine can tilt a fixed amount, for example $\phi \in [-10\degree, 10\degree]$. Assume we can control the thrust $T$ as well as the gimbal angle $\phi$. 
+Consider a rocket whose engine can tilt a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$. Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
 Given some initial conditions for the rocket (position, velocity, angle, fuel, ...), find a control that lands the rocket at the target with zero velocity and in an upright position.
 
 ![Rocket Sketch](https://github.com/sseso/rocket-control/blob/main/showcase/rocket_sketch.jpg)
