@@ -228,7 +228,12 @@ Since solving the full problem from scratch was quite indimidating, the problem 
 2. **Rotational dynamics**: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t$.
 3. **Combine the dynamics** --> Solve the full 2D Problem.
 
-# Issues & Fixes
+# Plots
+If a trajectory solution to the given initial conditions is found, the program will also display plots showing the evolution of the most important parameters over time, which helps in visualizing the trajecory as well as sanity-checks and diagnostic testing. Below are some (not all) plots corresponding to the animation at the top of the README.
+
+![Plot Example](https://github.com/sseso/rocket-control/blob/main/showcase/plots_example.png)
+
+# Performance, Issues & Fixes
 ## SLSQP vs. CasADi / IPOPT
 ### SLSQP is not feasible for this kind of problem
 The full 2D case is solved with a numerical solver. Initially, the simulation was implemented with scipy.optimize.minimize's SLSQP (Sequential Least SQuares Programming), which is a gradient-based optimization algorithm used to minimize a scalar function of multiple variables subject to bounds, equality, and inequality constraints. However, this algorithm was not suitable for this direct collocation problem:
