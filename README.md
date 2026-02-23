@@ -67,7 +67,7 @@ v_y \\
 \frac{T}{m} \sin(\theta + \alpha) \\
 \frac{T}{m} \cos(\theta + \alpha) - g \\
 \omega \\
--\frac{l_\text{com}(m) \cdot T}{I_z(m)} \sin(\alpha) \\
+-\frac{d_\text{com}(m) \cdot T}{I_z(m)} \sin(\alpha) \\
 -\frac{T}{v_e}
 \end{bmatrix}
 $$
@@ -99,12 +99,12 @@ $$
 & v_y(t_f)        = 0, \\
 & \theta(t_f)     = 0, \\
 & \omega(t_f)     = 0, \\
-& y(t_f)          = l_{\mathrm{com}}(m(t_f)), \\
+& y(t_f)          = d_{\mathrm{com}}(m(t_f)), \\
 & \alpha(t_f)     = 0.
 \end{aligned}
 $$
 
-The condition $y(t_f) = l_\text{com}(m(t_f))$ ensures the nozzle touches the ground at touchdown.
+The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the ground at touchdown.
 
 ### Path Constraints & Bounds
 - $y(t) \geq 0$
@@ -135,12 +135,12 @@ L &= w_\text{thrust} \, T^2
 
 where
 ```math
-p(t) = \max\left(0, 1 - \frac{y - l_\text{com}(m)}{2\, h_\text{rocket}}\right)^3
+p(t) = \max\left(0, 1 - \frac{y - d_\text{com}(m)}{2\, h_\text{rocket}}\right)^3
 ```
 
 Ground violation penalty:
 ```math
-J_\text{ground} = 10^6 \int_0^{t_f} \max(0, -(y - l_\text{com}(m)))^2 \, dt
+J_\text{ground} = 10^6 \int_0^{t_f} \max(0, -(y - d_\text{com}(m)))^2 \, dt
 ```
 
 Typical weights used in the code:
