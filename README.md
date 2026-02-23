@@ -4,7 +4,7 @@ This repository contains a **direct collocation** solver (trapezoidal method + C
 ![2D Landing Showcase GIF](https://github.com/sseso/rocket-control/blob/main/showcase/2D_landing_showcase.gif)
 
 # The Problem
-Consider a rocket whose engine can tilt a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$. Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
+Consider a rocket in a gravitational field whose engine can gimbaled a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$ (for simplicity, ignore aerodynamic forces/drag). Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
 Given some initial conditions for the rocket (see state vector below), find a control that lands the rocket at a specified target with zero velocity and in an upright position.
 
 ![Rocket Sketch](https://github.com/sseso/rocket-control/blob/main/showcase/rocket_sketch.jpg)
@@ -47,16 +47,60 @@ T(t) \\
 \end{aligned}
 $$
 
-### Mass-Dependent Geometry
+### Assumptions on Mass Distribution and Time-Dependent Mass
+
+The model simplifies the rocket's mass distribution to handle shifting CoM and MoI during fuel depletion. Key assumptions:
+
+1. **Uniform Distribution**:
+   - Dry mass $m_{\text{dry}}$ is uniform along rocket height $h_{\text{rocket}}$, modeled as a slender rod.
+   - Fuel mass (initial $m_{\text{fuel}}$) is uniform in a tank of height $h_{\text{fuel}} = \frac{1}{2} h_{\text{rocket}}$.
+
+2. **Fixed Positions**:
+   - Measured from nozzle upward.
+   - Dry CoM: $d_{\text{dry}} = \frac{1}{2} h_{\text{rocket}}$.
+   - Fuel CoM: $d_{\text{fuel}} = \frac{1}{2} h_{\text{fuel}}$ (tank in lower half).
+   - Thrust at nozzle; torque arm is current CoM distance.
+
+3. **Time-Dependent Mass**:
+   - $m(t)$ decreases: $\dot{m} = -\frac{T}{v_e}$ $\quad (v_e = I_{\text{sp}} \cdot g_0$, where $I_{\text{sp}}$ is the specific impulse).
+   - Fuel: $\max(m(t) - m_{\text{dry}}, 0)$.
+   - Dry mass constant; no other losses.
+   - CoM shifts upward, MoI decreases with fuel depletion.
+
+4. **MoI Simplifications**:
+   - Components as uniform rods: $I_{\text{cm}} = \frac{1}{12} m L^2$.
+   - Total $I_z(m)$ via parallel axis theorem for 2D rotation.
+   - $I_z(m) > 0$ ensured by $m \geq m_{\text{dry}}$.
+
+5. **Implicit Assumptions**:
+   - Rigid body; no sloshing or non-rigid effects.
+   - Uniform fuel depletion.
+   - Mass-dependent (via $m(t)$); updates per step/node.
+
+### Mass-Dependent Geometry Equations
+
+CoM and MoI as functions of mass \( m \):
+
 $$
-d_\text{com}(m) = \frac{m_\text{dry} \cdot d_\text{dry} + (m - m_\text{dry}) \cdot d_\text{fuel}}{m}
+d_{\text{com}}(m) = \frac{m_{\text{dry}} \cdot d_{\text{dry}} + \max(m - m_{\text{dry}}, 0) \cdot d_{\text{fuel}}}{m}
 $$
 
 $$
-I_z(m) = I_\text{dry,cm} + m_\text{dry}(d_\text{dry} - d_\text{com}(m))^2 + I_\text{fuel,cm}(m) + (m - m_\text{dry})(d_\text{fuel} - d_\text{com}(m))^2
+I_z(m) = I_{\text{dry,cm}} + m_{\text{dry}} (d_{\text{dry}} - d_{\text{com}}(m))^2 + I_{\text{fuel,cm}}(m) + \max(m - m_{\text{dry}}, 0) (d_{\text{fuel}} - d_{\text{com}}(m))^2
 $$
 
-where $I_\text{dry,cm} = \frac{1}{12} m_\text{dry} h_\text{rocket}^2$ and $I_\text{fuel,cm}(m) = \frac{1}{12} (m - m_\text{dry}) h_\text{fuel}^2$ (0 if no fuel remains).
+where
+
+$$
+I_{\text{dry,cm}} = \frac{1}{12} m_{\text{dry}} h_{\text{rocket}}^2,
+$$
+
+$$
+I_{\text{fuel,cm}}(m) = \begin{cases} 
+\frac{1}{12} (m - m_{\text{dry}}) h_{\text{fuel}}^2 & m > m_{\text{dry}}, \\
+0 & \text{otherwise}.
+\end{cases}
+$$
 
 ### Dynamics
 $$
@@ -107,49 +151,58 @@ The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the gro
 
 ### Path Constraints & Bounds
 - $y(t) \geq 0$
-- $-50 \leq v_x(t) \leq 50$ [m/s]
-- $-100 \leq v_y(t) \leq 50$ [m/s]
+- $-50 \leq v_x(t) \leq 50$ [m/s] (can be changed depending on the magnitude of the initial conditions)
+- $-100 \leq v_y(t) \leq 50$ [m/s] (can be changed depending on the magnitude of the initial conditions)
 - $-0.5 \leq \omega(t) \leq 0.5$ [rad/s]
 - $m_\text{dry} \leq m(t) \leq m_0$
 - Thrust: $0 \leq T(t) \leq T_\text{max}$
 - Gimbal (most of flight): $|\alpha(t)| \leq 10^\circ$
 - Gimbal & pitch (near landing): $|\alpha(t)| \leq 2^\circ$, $|\theta(t)| \leq 2^\circ$
 
-### Objective (to be minimized)
+### Objective Function (to be Minimized)
+
 $$
-J = w_t \, t_f + \int_0^{t_f} L(\mathbf{x},\mathbf{u},\dot{\alpha}) \, dt + J_\text{ground}
+J = w_t t_f + \int_0^{t_f} L(x,u,\dot{\alpha})\, dt + J_{\text{ground}} + J_{\text{inverse-h}}
 $$
 
-Running cost:
-```math
-\begin{aligned}
-L &= w_\text{thrust} \, T^2
-  + w_\text{gimbal} \, \alpha^2
-  + w_\text{gimbal rate} \left(\frac{d\alpha}{dt}\right)^2 \\
-  &\quad + w_\theta \, \theta^2
-  + w_\text{alt thrust} \, T^2 \cdot \frac{y}{y_0} \\
-  &\quad + w_\text{landing} \, (\theta^2 + \alpha^2) \cdot p(t)
-\end{aligned}
-```
+### Running Cost
+
+$$
+L = w_{\text{thrust}} T^2 + w_{\text{gimbal}} \alpha^2 + w_{\text{gimbal rate}} \left( \frac{d\alpha}{dt} \right)^2 + w_\theta \theta^2 + w_{\text{alt thrust}} T^2 \cdot \frac{y}{y_0} + w_{\text{landing}} (\theta^2 + \alpha^2) \cdot p(t)
+$$
 
 where
-```math
-p(t) = \max\left(0, 1 - \frac{y - d_\text{com}(m)}{2\, h_\text{rocket}}\right)^3
-```
+
+$$
+p(t) = \max\left(0, 1 - \frac{y - d_{\text{com}}(m)}{2 h_{\text{rocket}}}\right)^3
+$$
+
+### Additional Penalties
 
 Ground violation penalty:
-```math
-J_\text{ground} = 10^6 \int_0^{t_f} \max(0, -(y - d_\text{com}(m)))^2 \, dt
-```
 
-Typical weights used in the code:
+$$
+J_{\text{ground}} = 10^8 \int_0^{t_f} \max\left(0, -(y - d_{\text{com}}(m))\right)^2 \, dt
+$$
+
+Velocity-altitude penalty (softened to avoid singularity):
+
+$$
+J_{\text{inverse-h}} = w_v \int_0^{t_f} \frac{v_x^2 + v_y^2}{\max(\epsilon, y - d_{\text{com}}(m))} \, dt
+$$
+
+with $\epsilon = 20$ m.
+
+### Weights in the Code
+
 - $w_t = 10$
-- $w_\text{thrust} = 10^{-3}$
-- $w_\text{gimbal} = 0.05$
-- $w_\text{gimbal rate} = 0.25$
-- $w_\theta = 0.5$
-- $w_\text{alt thrust} = 0.01$
-- $w_\text{landing} = 2000$
+- $w_{\text{thrust}} = 10^{-10}$
+- $w_{\text{gimbal}} = 0.05$
+- $w_{\text{gimbal rate}} = 0.25$
+- $w_\theta = 2.0$
+- $w_{\text{alt thrust}} = 6.25 \times 10^{-6}$
+- $w_{\text{landing}} = 4000$
+- $w_v = 50$
 
 ## Summary
 
