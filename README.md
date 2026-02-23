@@ -169,6 +169,6 @@ The problem is discretized using **trapezoidal collocation** with $N=40$ interva
 # Approach
 Since solving the full problem from scratch was quite indimidating, the problem was broken down into three steps:
 
-1. The 1D Problem: Consider a falling rocket in a gravitational field (only y-component, no angular deviations). Find a thrust control which lands the rocket with zero velocity.
-2. Rotational dynamics: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t.
-3. Combine the dynamics --> Solve the full 2D Problem.
+1. **The 1D Problem**: Consider a falling rocket in a gravitational field (only y-component, no angular deviations). Find a thrust control which lands the rocket with zero velocity.
+2. **Rotational dynamics**: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t.
+3. **Combine the dynamics** --> Solve the full 2D Problem.
