@@ -1,4 +1,4 @@
-# Rocket Control Simulation
+# Rocket Control
 This repository contains a **direct collocation** solver (trapezoidal method + CasADi + IPOPT) for a 2D rocket landing problem with variable mass, moving center of mass, and thrust vector control via gimbal. It also includes animations and diagnostic plots for the calculated solutions.
 
 ![2D Landing Showcase GIF](https://github.com/sseso/rocket-control/blob/main/showcase/2D_landing_showcase.gif)
