@@ -3,14 +3,11 @@ This repository contains a **direct collocation** solver (trapezoidal method + C
 
 # The Problem
 Consider a rocket whose engine can tilt a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$. Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
-Given some initial conditions for the rocket (position, velocity, angle, fuel, ...), find a control that lands the rocket at the target with zero velocity and in an upright position.
+Given some initial conditions for the rocket (see state vector below), find a control that lands the rocket at a specified target with zero velocity and in an upright position.
 
 ![Rocket Sketch](https://github.com/sseso/rocket-control/blob/main/showcase/rocket_sketch.jpg)
 
 # Mathematical formulation of the control problem
-
-
-## Continuous-Time Optimal Control Problem
 
 ### State Vector
 $$
@@ -152,7 +149,7 @@ Typical weights used in the code:
 - $w_\text{alt thrust} = 0.01$
 - $w_\text{landing} = 2000$
 
-## Summary – Full OCP
+## Summary
 
 $$
 \begin{aligned}
@@ -167,3 +164,11 @@ $$
 $$
 
 The problem is discretized using **trapezoidal collocation** with $N=40$ intervals ($N$ can be varied for desired precision, though computation time increases with N).
+
+
+# Approach
+Since solving the full problem from scratch was quite indimidating, the problem was broken down into:
+
+1. A 1D Problem: Consider a falling rocket in a gravitational field (only y-component, no angular deviations). Find a thrust control which lands the rocket with zero velocity.
+2. Rotational dynamics: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Assume the engine can gimbal. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t$.
+3. Combine the dynamics --> Solve the full 2D Problem.
