@@ -178,15 +178,15 @@ Since solving the full problem from scratch was quite indimidating, the problem 
 # Issues & Fixes
 ## SLSQP vs. CasADi / IPOPT
 ### SLSQP is not feasible for this kind of problem
-The full 2D case is solved with a numerical solver. Initially, the simulation was implemented with scipy.optimize.minimize's SLSQP (Sequential Least SQuares Programming), which is a gradient-based optimization algorithm used to minimize a scalar function of multiple variables subject to bounds, equality, and inequality constraints. However, this algorithm was not suitable for this explicit problem:
-- No explicit analytical gradients are given, which means SciPy is estimating them by tweaking every single variable one by one. With $N=40$ collocation nodes, that's ~370 variables. That means SciPy runs the physics simulation ~371 times per iteration just to figure out which direction to step.
+The full 2D case is solved with a numerical solver. Initially, the simulation was implemented with scipy.optimize.minimize's SLSQP (Sequential Least SQuares Programming), which is a gradient-based optimization algorithm used to minimize a scalar function of multiple variables subject to bounds, equality, and inequality constraints. However, this algorithm was not suitable for this direct collocation problem:
+- No explicit analytical gradients are given, which means SciPy is estimating (with finite differences) them by tweaking every single variable one by one. With $N=40$ collocation nodes, that's ~370 variables. That means SciPy runs the physics simulation ~371 times per iteration just to figure out which direction to step. It's also sensitive to noise; If the physics simulation has small numerical jitters, the estimated gradient can point in an entirely wrong direction, giving wrong results.
 - The main way to control the behaviour of the rocket is through tuning the weights of the cost function. Large penalties on constraints (like J_ground = 1e8 * ...) create extremely steep gradients that SLSQP struggles to navigate, causing it to take tiny step sizes and run up the iteration count.
-- In direct collocation, a state at node $k$ only affects node $k+1$. This creates a highly diagonal, "sparse" Jacobian matrix. SLSQP treats this as a dense block of math, wasting massive amounts of memory and CPU cycles calculating zeros.
+- In direct collocation, a state at node $k$ only affects node $k+1$. This creates a highly diagonal, "sparse" Jacobian matrix. SLSQP cannot recognize that most entries of the Jacobian are zero and therefore don't contribute to the next step, wasting massive amounts of memory and CPU cycles.
 
 This caused **runtimes of 3-10 minutes for just a single simulation**, which is far too inefficient for any real use case.
 
 ### The solution: CasADi / IPOPT
-The dynamics and objective were ported to CasADi (a Python library specifically built for these kinds of problems). CasADi uses Automatic Differentiation (exact gradients with zero finite difference overhead) and uses IPOPT, an interior-point solver designed for large, sparse non-linear programming (NLP) problems.
+The dynamics and objective were ported to CasADi (a Python library specifically built for these kinds of problems). CasADi uses Algorithmic Differentiation (exact gradients with zero finite difference overhead) and uses IPOPT, an interior-point solver designed for large, sparse non-linear programming (NLP) problems. IPOPT knows that the vast majority of entries in the Jacobian are zero and only calculates the non-zero interactions. This reduces the time complexity from $O(n^3)$ to something much closer to ~$O(n^{1.5})$.
 
 This **reduced the runtime to only a few seconds per simulation**. Without this change, the convergence test across a wide grid of initial conditions would not have been feasible (hours of runtime vs. minutes).
 
@@ -195,6 +195,7 @@ Still, CasADi / IPOPT is not without its own issues. One main issue is numerical
 
 ![Reachable Set with numerical artifacts](https://github.com/sseso/rocket-control/blob/main/showcase/Reachable_Set_Buggy.png)
 
+The reason for this is that when $x=0$, $v=0$, and $\theta=0$, the derivative of the cost function with respect to the gimbal angle might be exactly zero, which can cause the solver to get stuck, as any direction for the next step looks equally "bad".
 ### The solution: Add a small pertubation (0.0001) to the initial x and v values if they are zero
 This simple fix allowed the solver to converge for the finicky zero-valued initial conditions, though some instability (especially for higher initial values) remains even for non-zero inputs which should be controllable; see below.
 
