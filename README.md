@@ -186,7 +186,7 @@ The full 2D case is solved with a numerical solver. Initially, the simulation wa
 This caused **runtimes of 3-10 minutes for just a single simulation**, which is far too inefficient for any real use case.
 
 ### The solution: CasADi / IPOPT
-The dynamics and objective were ported to CasADi (a Python library specifically built for these kinds of problems). CasADi uses Algorithmic Differentiation (exact gradients with zero finite difference overhead) and uses IPOPT, an interior-point solver designed for large, sparse non-linear programming (NLP) problems. IPOPT knows that the vast majority of entries in the Jacobian are zero and only calculates the non-zero interactions. This reduces the time complexity from $O(n^3)$ to something much closer to ~$O(n^{1.5})$.
+The dynamics and objective were ported to CasADi (a Python library specifically built for these kinds of problems). CasADi uses Algorithmic Differentiation (exact gradients with zero finite difference overhead) and uses IPOPT, an interior-point solver designed for large, sparse non-linear programming (NLP) problems. IPOPT knows that the vast majority of entries in the Jacobian are zero and only calculates the non-zero interactions. This reduces the time complexity from $O(n^3)$ to something much closer to $\sim O(n^{1.5})$.
 
 This **reduced the runtime to only a few seconds per simulation**. Without this change, the convergence test across a wide grid of initial conditions would not have been feasible (hours of runtime vs. minutes).
 
