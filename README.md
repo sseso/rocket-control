@@ -253,3 +253,7 @@ The reason for this is that when $x=0$, $v=0$, and $\theta=0$, the derivative of
 This simple fix allowed the solver to converge for the finicky zero-valued initial conditions, though some instability (especially for higher initial values) remains even for non-zero inputs which should be controllable; see below.
 
 ![Reachable Set with pertubation fix](https://github.com/sseso/rocket-control/blob/main/showcase/Reachable_Set_Improved.png)
+
+
+# Sources
+Kelly, M. (2017). An introduction to trajectory optimization: How to do your own direct collocation. SIAM Review, 59(4), 849–904. https://doi.org/10.1137/16M1062569
