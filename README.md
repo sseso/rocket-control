@@ -1,7 +1,7 @@
 # Rocket Control
 This repository contains a **direct collocation** solver (trapezoidal method + CasADi + IPOPT) for a 2D rocket landing problem with variable mass, moving center of mass, and thrust vector control via gimbal. It also includes animations and diagnostic plots for the calculated solutions.
 
-![2D Landing Showcase GIF](https://github.com/sseso/rocket-control/blob/main/showcase/2D_landing_showcase.gif)
+![2D Landing Showcase GIF](https://github.com/sseso/rocket-control/blob/main/showcase/2D_landing.gif)
 
 # The Problem
 Consider a rocket in a gravitational field whose engine can gimbaled a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$ (for simplicity, ignore aerodynamic forces/drag). Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
