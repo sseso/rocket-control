@@ -191,7 +191,7 @@ $$
 J_{\text{inverse-h}} = w_v \int_0^{t_f} \frac{v_x^2 + v_y^2}{\max(\epsilon, y - d_{\text{com}}(m))} \, dt
 $$
 
-with $\epsilon = 20$ m.
+with $\epsilon = 5$ m.
 
 ### Weights in the Code
 
