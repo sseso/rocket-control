@@ -29,7 +29,7 @@ m(t)
 &\text{(horizontal velocity)} \\
 &\text{(vertical velocity)} \\
 &\text{(pitch angle from vertical)} \\
-&\text{(angular velocity)} \\
+&\text{(angular velocity, $\dot{\theta} = \omega$)} \\
 &\text{(total mass)}
 \end{aligned}
 $$
