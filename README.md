@@ -228,6 +228,10 @@ Since solving the full problem from scratch was quite indimidating, the problem 
 2. **Rotational dynamics**: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t$.
 3. **Combine the dynamics** --> Solve the full 2D Problem.
 
+The 1D problem (landing an upright, falling rocket) is not too interesting, as it only involved controlling thrust (for time optimal controls, this happens in a bang-bang manner). The rotational case is already more interesting, as one has to model the gimbal tilt as well as the resulting torque, which changes over time, since the center of mass and the moment of inertia change as the fuel burns. Additionally, any attitude correction maneuvers cause translation, which has to be taken into account, too. Here's how the rotational dynamics turned out:
+
+![Rotation GIF](https://github.com/sseso/rocket-control/blob/main/showcase/rotation.gif)
+
 # Plots
 If a trajectory solution to the given initial conditions is found, the program will also display plots showing the evolution of the most important parameters over time, which helps in visualizing the trajecory as well as sanity-checks and diagnostic testing. Below are some (not all) plots corresponding to the animation at the top of the README.
 
