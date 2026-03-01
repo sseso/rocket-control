@@ -207,7 +207,7 @@ $$
 \end{aligned}
 $$
 
-The problem is discretized using **trapezoidal collocation** with $N=40$ intervals ($N$ can be varied for desired precision, though computation time increases with N, roughly $\sim O(n^2)$ based on test runs).
+The problem is discretized using **trapezoidal collocation** with $N=40$ intervals ($N$ can be varied for desired precision, though computation time increases with N, roughly $\sim O(N^2)$ based on test runs).
 
 
 # Approach
@@ -222,7 +222,7 @@ The 1D problem (landing an upright, falling rocket) is not too interesting, as i
 ![Rotation GIF](https://github.com/sseso/rocket-control/blob/main/showcase/rotation.gif)
 
 # Plots
-If a trajectory solution to the given initial conditions is found, the program will also display plots showing the evolution of the most important parameters over time, which helps in visualizing the trajecory as well as sanity-checks and diagnostic testing. Below are some (not all) plots corresponding to the animation at the top of the README.
+If a trajectory solution to the given initial conditions is found, the program will also display plots showing the evolution of the most important parameters over time, which helps in visualizing the trajecory as well as sanity-checks and diagnostic testing. Below are some (not all) plots corresponding to the landing animation at the very top of the README.
 
 ![Plot Example](https://github.com/sseso/rocket-control/blob/main/showcase/plots_example.png)
 
