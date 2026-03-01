@@ -151,9 +151,9 @@ The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the gro
 
 ### Path Constraints & Bounds
 - $y(t) \geq 0$
-- $-50 \leq v_x(t) \leq 50$ [m/s] (can be changed depending on the magnitude of the initial conditions)
-- $-100 \leq v_y(t) \leq 50$ [m/s] (can be changed depending on the magnitude of the initial conditions)
-- $-0.5 \leq \omega(t) \leq 0.5$ [rad/s]
+- $|v_x(t)| \leq v_{x_{\text{max}}}$ [m/s] (can be changed depending on the magnitude of the initial conditions)
+- $|v_y(t)| \leq v_{y_{\text{max}}}$ [m/s] (can be changed depending on the magnitude of the initial conditions)
+- $|\omega(t)| \leq \omega_{\text{max}}$ [rad/s]
 - $m_\text{dry} \leq m(t) \leq m_0$
 - Thrust: $0 \leq T(t) \leq T_\text{max}$
 - Gimbal (most of flight): $|\alpha(t)| \leq 10^\circ$
