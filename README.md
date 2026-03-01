@@ -151,8 +151,8 @@ The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the gro
 
 ### Path Constraints & Bounds
 - $y(t) \geq 0$
-- $|v_x(t)| \leq v_{x_{\text{max}}}$ [m/s] (can be changed depending on the magnitude of the initial conditions)
-- $|v_y(t)| \leq v_{y_{\text{max}}}$ [m/s] (can be changed depending on the magnitude of the initial conditions)
+- $|v_x(t)| \leq v_{x_{\text{max}}}$ [m/s]
+- $v_{y_{\text{min}}} \leq v_y(t) \leq v_{y_{\text{max}}}$ [m/s]
 - $|\omega(t)| \leq \omega_{\text{max}}$ [rad/s]
 - $m_\text{dry} \leq m(t) \leq m_0$
 - Thrust: $0 \leq T(t) \leq T_\text{max}$
@@ -192,17 +192,6 @@ J_{\text{inverse-h}} = w_v \int_0^{t_f} \frac{v_x^2 + v_y^2}{\max(\epsilon, y - 
 $$
 
 with $\epsilon = 5$ m.
-
-### Weights in the Code
-
-- $w_t = 10$
-- $w_{\text{thrust}} = 10^{-10}$
-- $w_{\text{gimbal}} = 0.05$
-- $w_{\text{gimbal rate}} = 0.25$
-- $w_\theta = 2.0$
-- $w_{\text{alt thrust}} = 6.25 \times 10^{-6}$
-- $w_{\text{landing}} = 4000$
-- $w_v = 50$
 
 ## Summary
 
