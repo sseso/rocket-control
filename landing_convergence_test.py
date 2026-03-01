@@ -1,5 +1,5 @@
 """
-test.py
+landing_convergence_test.py
 -------
 Convergence & Reachable Set grid test.
 
@@ -20,10 +20,10 @@ try:
 except ImportError:
     IN_NOTEBOOK = False
 
-from rocket_control.config_test   import RocketConfigTest
-from rocket_control.physics       import calculate_com_and_I, approx_controllable
-from rocket_control.solver        import solve_optimal_landing
-from rocket_control.landing_check import evaluate_landing, print_landing_report
+from rocket_control.landing.config_test   import RocketConfigTest
+from rocket_control.landing.physics       import calculate_com_and_I, approx_controllable
+from rocket_control.landing.solver        import solve_optimal_landing
+from rocket_control.landing.landing_check import evaluate_landing, print_landing_report
 
 os.makedirs("results", exist_ok=True)
 

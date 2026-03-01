@@ -1,5 +1,5 @@
 """
-sim.py
+landing_sim.py
 ------
 Full 2D CasADi rocket landing simulation.
 
@@ -12,11 +12,11 @@ Run:
 import os
 import numpy as np
 
-from rocket_control.config       import RocketConfig
-from rocket_control.physics      import calculate_com_and_I, approx_controllable
-from rocket_control.solver       import solve_optimal_landing
-from rocket_control.landing_check import evaluate_landing, print_landing_report
-from rocket_control.animation    import plot_diagnostics, animate_results
+from rocket_control.landing.config       import RocketConfig
+from rocket_control.landing.physics      import calculate_com_and_I, approx_controllable
+from rocket_control.landing.solver       import solve_optimal_landing
+from rocket_control.landing.landing_check import evaluate_landing, print_landing_report
+from rocket_control.landing.animation    import plot_diagnostics, animate_results
 
 os.makedirs("results", exist_ok=True)
 
