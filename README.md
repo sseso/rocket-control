@@ -3,13 +3,55 @@ This repository contains a **direct collocation** solver (trapezoidal method + C
 
 ![2D Landing Showcase GIF](https://github.com/sseso/rocket-control/blob/main/showcase/rocket_landing_smooth.gif)
 
-# The Problem
+# Installation & Usage
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/sseso/rocket-control.git
+   cd rocket-control
+   ```
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate      # Linux/macOS
+   # or
+   venv\Scripts\activate         # Windows
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+**Note:** This project depends on CasADi and IPOPT.
+On many systems you can install CasADi via pip (```pip install casadi```).
+IPOPT is usually installed automatically with CasADi when using the pip package, but if you encounter solver issues you may need a system-level IPOPT installation (e.g. via conda, brew, apt, or from https://coin-or.github.io/Ipopt/INSTALL.html).
+
+## Usage
+To run the main 2D landing sim, edit any parameters in rocket_control/landing/config.py. Then in the terminal run:
+```bash
+python landing_sim.py video_file_name
+```
+To run the rotational dynamics sim (attitude control), simply run (modes: dual, rotation, translation):
+```bash
+python attitude_sim.py --name file_name --mode sim_mode
+```
+Then you can enter the simulation parameters in the terminal.
+
+To run the convergence test for the 2D landing sim, edit any parameters in rocket_control/landing/config_test.py, then run:
+```bash
+python landing_convergence_test.py output_file_name
+```
+
+### Jupyter Notebooks
+You can also run all simulations and tests inside the notebook in notebooks/rocket_control_dev.ipynb, where you'll also find additional cells with earlier steps from the development.
+
+# The Control Problem
 Consider a rocket in a gravitational field whose engine can gimbaled a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$ (for simplicity, ignore aerodynamic forces/drag). Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
 Given some initial conditions for the rocket (see state vector below), find a control that lands the rocket at a specified target with zero velocity and in an upright position.
 
 ![Rocket Sketch](https://github.com/sseso/rocket-control/blob/main/showcase/rocket_sketch.jpg)
 
-# Mathematical formulation of the control problem
+# Mathematical formulation
 
 ### State Vector
 $$
