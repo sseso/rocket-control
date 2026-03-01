@@ -75,11 +75,11 @@ The model simplifies the rocket's mass distribution to handle shifting CoM and M
 5. **Implicit Assumptions**:
    - Rigid body; no sloshing or non-rigid effects.
    - Uniform fuel depletion.
-   - Mass-dependent (via $m(t)$); updates per step/node.
+   - Mass-dependent (via $m(t))$; updates per step/node.
 
 ### Mass-Dependent Geometry Equations
 
-CoM and MoI as functions of mass \( m \):
+CoM and MoI as functions of mass $m$:
 
 $$
 d_{\text{com}}(m) = \frac{m_{\text{dry}} \cdot d_{\text{dry}} + \max(m - m_{\text{dry}}, 0) \cdot d_{\text{fuel}}}{m}
