@@ -1,6 +1,9 @@
 # .mp4 files from results
 results/**/*.mp4
 
+# everything in results/
+results/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
