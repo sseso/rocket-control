@@ -207,7 +207,7 @@ $$
 \end{aligned}
 $$
 
-The problem is discretized using **trapezoidal collocation** with $N=40$ intervals ($N$ can be varied for desired precision, though computation time increases with N, roughly $approx O(n^2)$ based on test runs).
+The problem is discretized using **trapezoidal collocation** with $N=40$ intervals ($N$ can be varied for desired precision, though computation time increases with N, roughly $\sim O(n^2)$ based on test runs).
 
 
 # Approach
