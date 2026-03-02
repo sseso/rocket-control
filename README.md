@@ -29,11 +29,11 @@ IPOPT is usually installed automatically with CasADi when using the pip package,
 ## Usage
 To run the main 2D landing sim, edit any parameters in rocket_control/landing/config.py. Then in the terminal run:
 ```bash
-python landing_sim.py video_file_name
+python landing.py video_file_name
 ```
 To run the rotational dynamics sim (attitude control), simply run (modes: dual, rotation, translation):
 ```bash
-python attitude_sim.py --name file_name --mode sim_mode
+python attitude.py --name file_name --mode sim_mode
 ```
 Then you can enter the simulation parameters in the terminal.
 
