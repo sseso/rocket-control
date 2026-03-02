@@ -11,6 +11,7 @@ Run:
 
 import os
 import numpy as np
+import sys
 
 from rocket_control.landing.config       import RocketConfig
 from rocket_control.landing.physics      import calculate_com_and_I, approx_controllable
@@ -92,6 +93,5 @@ def main(output_name="landing"):
 
 
 if __name__ == "__main__":
-    import sys
     name = sys.argv[1] if len(sys.argv) > 1 else "landing"
     main(output_name=name)
