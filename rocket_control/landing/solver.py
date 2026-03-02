@@ -96,6 +96,7 @@ def solve_optimal_landing(initial_state, config):
     # --- Boundary Conditions ---
     opti.subject_to(X[:, 0] == initial_state)
 
+    # terminal conditions
     opti.subject_to(X[0, -1] == 0)   # x  = 0
     opti.subject_to(X[2, -1] == 0)   # vx = 0
     opti.subject_to(X[3, -1] == 0)   # vy = 0
