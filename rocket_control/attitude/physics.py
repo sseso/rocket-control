@@ -27,7 +27,7 @@ def calculate_com_and_I(curr_mass, fuel_remaining, config):
     Returns
     -------
     com_from_nozzle : float  (m)
-    I_z             : float  (kg·m²)
+    I_z             : float  (kg*m^2)
     """
     dry_mass = curr_mass - fuel_remaining
 

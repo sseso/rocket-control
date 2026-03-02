@@ -1,12 +1,12 @@
 """
-landing_sim.py
+landing.py
 ------
 Full 2D CasADi rocket landing simulation.
 
 Edit config.py parameters to control simulation details.
 
 Run:
-    python landing_sim.py video_file_name
+    python landing.py video_file_name
 """
 
 import os

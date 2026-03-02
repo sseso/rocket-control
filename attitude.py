@@ -1,10 +1,10 @@
 """
-scripts/attitude_sim.py
+attitude.py
 -------------------
 Attitude control (rotation) simulation entry point.
 
 Run:
-    python attitude_sim.py --name my_run --mode dual
+    python attitude.py --name my_run --mode dual
     modes: dual, rotation, translation
 """
 
@@ -41,7 +41,10 @@ def main():
     dry_mass     = float(input("Dry mass (kg): "))
     fuel_mass    = float(input("Fuel mass (kg): "))
     thrust_force = float(input("Thrust Force (N): "))
-    v_e          = float(input("Exhaust velocity (m/s): "))
+    I_sp         = float(input("Specific Impulse (s): "))
+
+    g0 = 9.81 # standard gravity for specific impulse (m/s^2)
+    v_e = g0 * I_sp
 
     # ---- Mode selection ----
     if args.mode:
