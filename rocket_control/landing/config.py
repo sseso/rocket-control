@@ -133,3 +133,5 @@ class RocketConfig:
     initial_x_0  =  30.0              # Initial downrange offset (m)
     initial_vx_0 =  -8.0             # Initial horizontal velocity (m/s)
     initial_vy_0 = -30.0             # Initial vertical velocity (m/s, negative = downward)
+    initial_theta = 0.0              # Initial attitude against the vertical (°)
+    initial_omega = 0.0              # Initial angular velocity (positive = clockwise) (°/s)

@@ -30,6 +30,7 @@ def main(output_name="landing"):
     x_0  = config.initial_x_0
     vx_0 = config.initial_vx_0
     vy_0 = config.initial_vy_0
+    theta_0, omega_0 = config.initial_theta, config.initial_omega
 
     initial_m   = config.m_dry + config.m_fuel
     initial_com, _ = calculate_com_and_I(initial_m, config)
@@ -43,8 +44,8 @@ def main(output_name="landing"):
         h_0 + initial_com,   # y = CoM altitude
         vx_0,
         vy_0,
-        0.0,                  # theta
-        0.0,                  # omega
+        theta_0,
+        omega_0,
         initial_m,
     ])
 
