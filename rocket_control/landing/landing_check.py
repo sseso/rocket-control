@@ -66,7 +66,7 @@ def print_landing_report(LANDING_GOOD, metrics, config):
     if LANDING_GOOD:
         print("\nLanding looks good within tolerances!")
         print(f"  X-offset:      {metrics['error_x']:6.3f} m")
-        print(f"  Y-offset:      {metrics['error_y']:6.3f} m  (+ = floating, − = sunk)")
+        print(f"  Y-offset:      {metrics['error_y']:6.3f} m  (+ = floating, - = sunk)")
         print(f"  Velocity err:  {metrics['final_vel_err']:6.3f} m/s")
         print(f"  Min nozzle:    {metrics['min_nozzle']:6.3f} m")
     else:

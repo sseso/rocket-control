@@ -28,8 +28,8 @@ def plot_diagnostics(result, theta_target, include_translation, config):
                   result.thrusts, result.torques, result.coms, result.Is,
                   result.x_coms, result.y_coms, result.vxs, result.vys]
         labels = ['Angle (deg)', 'Ω (deg/s)', 'Gimbal (deg)', 'Mass (kg)',
-                  'Thrust (N)', 'Torque (N·m)', 'CoM from nozzle (m)',
-                  'Moment of Inertia (kg·m²)', 'X pos (m)', 'Y pos (m)',
+                  'Thrust (N)', 'Torque (N*m)', 'CoM from nozzle (m)',
+                  'Moment of Inertia (kg*m²)', 'X pos (m)', 'Y pos (m)',
                   'Vx (m/s)', 'Vy (m/s)']
         colors = ['cyan', 'lime', 'orange', 'red', 'blue', 'purple',
                   'magenta', 'gold', 'teal', 'navy', 'brown', 'olive']
@@ -40,8 +40,8 @@ def plot_diagnostics(result, theta_target, include_translation, config):
         data   = [result.angles, result.omegas, result.gimbals, result.masses,
                   result.thrusts, result.torques, result.coms, result.Is]
         labels = ['Angle (deg)', 'Ω (deg/s)', 'Gimbal (deg)', 'Mass (kg)',
-                  'Thrust (N)', 'Torque (N·m)', 'CoM from nozzle (m)',
-                  'Moment of Inertia (kg·m²)']
+                  'Thrust (N)', 'Torque (N*m)', 'CoM from nozzle (m)',
+                  'Moment of Inertia (kg*m²)']
         colors = ['cyan', 'lime', 'orange', 'red', 'blue', 'purple', 'magenta', 'gold']
         title  = "Post-Flight Analysis"
 

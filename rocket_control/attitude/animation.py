@@ -121,7 +121,7 @@ def _animate_rotation(result, theta_0, theta_target, omega_0,
         tx_thrust.set_text( f"{'THRUST:':>{LW}}{thr_val:>{VW}.0f} [N]")
         tx_fuel.set_text(   f"{'FUEL LEFT:':>{LW}}{result.masses[i] - dry_mass:>{VW}.2f} [kg]")
         tx_burned.set_text( f"{'FUEL USED:':>{LW}}{fuel_mass - (result.masses[i] - dry_mass):>{VW}.2f} [kg]")
-        tx_torque.set_text( f"{'TORQUE:':>{LW}}{result.torques[i]:>{VW}.0f} [N·m]")
+        tx_torque.set_text( f"{'TORQUE:':>{LW}}{result.torques[i]:>{VW}.0f} [N*m]")
         tx_time.set_text(   f"{'TIME:':>{LW}}{min(result.times[i], result.final_time):>{VW}.2f} [s]")
 
         leg = ax.get_legend()
@@ -248,7 +248,7 @@ def _animate_translation(result, theta_0, theta_target, omega_0,
         tx_thrust.set_text( f"{'THRUST:':>{LW}}{thr_val:>{VW}.0f} [N]")
         tx_fuel.set_text(   f"{'FUEL LEFT:':>{LW}}{result.masses[i] - dry_mass:>{VW}.2f} [kg]")
         tx_burned.set_text( f"{'FUEL USED:':>{LW}}{fuel_mass - (result.masses[i] - dry_mass):>{VW}.2f} [kg]")
-        tx_torque.set_text( f"{'TORQUE:':>{LW}}{result.torques[i]:>{VW}.0f} [N·m]")
+        tx_torque.set_text( f"{'TORQUE:':>{LW}}{result.torques[i]:>{VW}.0f} [N*m]")
         tx_time.set_text(   f"{'TIME:':>{LW}}{min(result.times[i], result.final_time):>{VW}.2f} [s]")
         pv1.set_text(f"   X: {cx:10.2f} m      Y: {cy:10.2f} m")
         pv2.set_text(f"  Vx: {result.vxs[i]:10.2f} m/s   Vy: {result.vys[i]:10.2f} m/s")

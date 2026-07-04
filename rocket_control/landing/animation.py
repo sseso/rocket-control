@@ -2,7 +2,6 @@
 animation.py
 ------------
 Diagnostic plots and rocket animation for the landing simulation.
-Depends only on NumPy / Matplotlib / SciPy – no CasADi.
 """
 
 import numpy as np
@@ -71,7 +70,7 @@ def plot_diagnostics(states, controls, tf, config):
     ]
     labels = [
         r'$\theta$ (deg)', r'$\omega$ (deg/s)', 'Gimbal (deg)', 'Mass (kg)',
-        'Thrust (N)', 'Torque (N·m)', 'CoM from nozzle (m)', 'MoI (kg·m²)',
+        'Thrust (N)', 'Torque (N*m)', 'CoM from nozzle (m)', 'MoI (kg*m²)',
         'X position (m)', 'Nozzle height (m)', 'Vx (m/s)', 'Vy (m/s)'
     ]
     colors = [

@@ -2,7 +2,6 @@
 attitude/physics.py
 -------------------
 Pure-physics helpers for the attitude control simulation.
-No matplotlib, no CasADi — only NumPy.
 """
 
 import sys
