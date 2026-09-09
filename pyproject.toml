@@ -25,6 +25,9 @@ notebooks = ["ipython>=8.0", "jupyter"]
 [project.urls]
 Homepage = "https://github.com/sseso/rocket-control"
 
+[project.scripts]
+rocket-control = "rocket_control.cli:main"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
