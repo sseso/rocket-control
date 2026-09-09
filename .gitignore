@@ -1,8 +1,9 @@
 # .mp4 files from results
 results/**/*.mp4
 
-# everything in results/
+# everything in results/ except the placeholder
 results/*
+!results/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

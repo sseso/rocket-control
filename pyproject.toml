@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rocket-control"
+version = "0.1.0"
+description = "Direct-collocation 2D rocket landing with variable mass and gimballed thrust"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Sven Seso"}]
+keywords = ["optimal-control", "direct-collocation", "rocket", "casadi"]
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.11",
+    "casadi>=3.6",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+notebooks = ["ipython>=8.0", "jupyter"]
+
+[project.urls]
+Homepage = "https://github.com/sseso/rocket-control"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
