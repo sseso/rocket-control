@@ -18,32 +18,54 @@ This repository contains a **direct collocation** solver (trapezoidal method + C
    # or
    venv\Scripts\activate         # Windows
    ```
-3. Install dependencies:
+3. Install the package (editable) and test extras:
    ```bash
-   pip install -r requirements.txt
+   pip install -e ".[dev]"
+   pytest
    ```
 **Note:** This project depends on CasADi and IPOPT.
-On many systems you can install CasADi via pip (```pip install casadi```).
-IPOPT is usually installed automatically with CasADi when using the pip package, but if you encounter solver issues you may need a system-level IPOPT installation (e.g. via conda, brew, apt, or from https://coin-or.github.io/Ipopt/INSTALL.html).
+On many systems you can install CasADi via pip (`pip install casadi`).
+IPOPT is usually installed automatically with CasADi when using the pip package, but if you encounter solver issues you may need a system-level IPOPT installation (e.g. via conda, brew, apt, or from https://coin-or.github.io/Ipopt/INSTALL.html). Animations require `ffmpeg` on your PATH.
 
 ## Usage
-To run the main 2D landing sim, edit any parameters in rocket_control/landing/config.py. Then in the terminal run:
-```bash
-python landing.py video_file_name
-```
-To run the rotational dynamics sim (attitude control), simply run (modes: dual, rotation, translation):
-```bash
-python attitude.py --name file_name --mode sim_mode
-```
-Then you can enter the simulation parameters in the terminal.
 
-To run the convergence test for the 2D landing sim, edit any parameters in rocket_control/landing/config_test.py, then run:
+To change the landing scenario, pass flags.
+
+Default 2D landing (writes `results/landing.mp4` if ffmpeg is available):
 ```bash
-python landing_convergence_test.py output_file_name
+python -m rocket_control landing -o results/landing.mp4
+```
+Override initial conditions at the CLI (`--theta-deg` / `--omega-deg` are converted to radians internally):
+```bash
+python -m rocket_control landing --x 30 --alt 160 --vx -8 --vy -30 --theta-deg 0 --omega-deg 0 --no-anim
 ```
 
-### Jupyter Notebooks
-You can also run all simulations and tests inside the notebook in notebooks/rocket_control_dev.ipynb, where you'll also find additional cells with earlier steps from the development.
+Attitude demo (closed-loop bang-bang gimbal in a vacuum, two views of the same scenario with `--mode dual`):
+```bash
+python -m rocket_control attitude --mode dual --theta0-deg 25 --target-deg 0 --omega0-deg 5
+```
+Modes: `rotation`, `translation`, `dual`. Add `--interactive` to type masses/thrust.
+
+Empirical landing success map over a grid of `(x, nozzle altitude)`:
+```bash
+python -m rocket_control grid -o results/success_grid.png
+```
+This is not a reachable set; It records whether IPOPT converged to a landing inside tolerances for each sample (see 'Numerical / Convergence Issues' section below).
+
+
+### Layout
+
+```
+src/rocket_control/
+  core/       shared vehicle, CoM/MoI, f(x,u)   (SI, radians)
+  landing/    trapezoidal NLP, costs, evaluation
+  attitude/   slew-limited gimbal law + Euler loop
+  viz/        matplotlib only
+  cli.py
+tests/        analytic plant checks (no ffmpeg)
+showcase/     curated GIFs
+results/      runtime outputs (gitignored)
+```
 
 # The Control Problem
 Consider a rocket in a gravitational field whose engine can gimbaled a fixed amount, for example $\alpha \in [-10\degree, 10\degree]$ (for simplicity, ignore aerodynamic forces/drag). Assume we can control the thrust $T$ as well as the gimbal angle $\alpha$. 
@@ -189,7 +211,7 @@ $$
 \end{aligned}
 $$
 
-The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the ground at touchdown.
+The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the ground at touchdown. Sign convention: $\theta = 0$ is upright, $\omega = \dot\theta$, and pitch acceleration is $-(d_{\mathrm{com}} T / I_z)\sin\alpha$.
 
 ### Path Constraints & Bounds
 - $y(t) \geq 0$
@@ -197,7 +219,7 @@ The condition $y(t_f) = d_\text{com}(m(t_f))$ ensures the nozzle touches the gro
 - $v_{y_{\text{min}}} \leq v_y(t) \leq v_{y_{\text{max}}}$ [m/s]
 - $|\omega(t)| \leq \omega_{\text{max}}$ [rad/s]
 - $m_\text{dry} \leq m(t) \leq m_0$
-- Thrust: $0 \leq T(t) \leq T_\text{max}$
+- Thrust: $T_{\min} \leq T(t) \leq T_\text{max}$ with a modelling throttle floor $T_{\min} = 4000\,\text{N}$ (the idealised problem allows $T=0$; the floor keeps IPOPT away from a singular coast). Set `VehicleSpec.T_min = 0` to recover the README idealisation.
 - Gimbal (most of flight): $|\alpha(t)| \leq 10^\circ$
 - Gimbal & pitch (near landing): $|\alpha(t)| \leq 2^\circ$, $|\theta(t)| \leq 2^\circ$
 
@@ -221,11 +243,13 @@ $$
 
 ### Additional Penalties
 
-Ground violation penalty:
+Ground violation penalty (soft complement to $y \ge 0$; weight `w_ground`):
 
 $$
-J_{\text{ground}} = 10^8 \int_0^{t_f} \max\left(0, -(y - d_{\text{com}}(m))\right)^2 \, dt
+J_{\text{ground}} = w_{\text{ground}} \int_0^{t_f} \max\left(0, -(y - d_{\text{com}}(m))\right)^2 \, dt
 $$
+
+with default $w_{\text{ground}} = 10^8$. The implementation applies this as a nodal sum (not multiplied by $\Delta t$).
 
 Velocity-altitude penalty (softened to avoid singularity):
 
@@ -251,12 +275,14 @@ $$
 
 The problem is discretized using **trapezoidal collocation** with $N=40$ intervals ($N$ can be varied for desired precision, though computation time increases with N, roughly $\sim O(N^2)$ based on test runs).
 
+Exactly-zero $x$, $v_x$, or $v_y$ is regularised by `eps_state = 1e-4` inside the solver so the gimbal cost gradient is not identically zero.
+
 
 # Approach
 Since solving the full problem from scratch was quite indimidating, the problem was broken down into three steps:
 
 1. **The 1D Problem**: Consider a falling rocket in a gravitational field (only y-component, no angular deviations). Find a thrust control which lands the rocket with zero velocity.
-2. **Rotational dynamics**: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. Find a thrust & gimbal control which rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t$.
+2. **Rotational dynamics**: Consider a rocket floating in the vacuum of space, with no external forces acting on it. Now assume the engine can gimbal in a fixed range. A **closed-loop bang-bang / slew-limited gimbal law** (not an NLP) rotates the rocket from an initial angle $\theta_0$ to a target angle $\theta_t$ on the same $f(x,u)$ with $g=0$.
 3. **Combine the dynamics** --> Solve the full 2D Problem.
 
 The 1D problem (landing an upright, falling rocket) is not too interesting, as it only involved controlling thrust (for time optimal controls, this happens in a bang-bang manner). The rotational case is already more interesting, as one has to model the gimbal tilt as well as the resulting torque, which changes over time, since the center of mass and the moment of inertia change as the fuel burns. Additionally, any attitude correction maneuvers cause translation, which has to be taken into account, too. Here's how the rotational dynamics turned out:
@@ -289,8 +315,8 @@ Still, CasADi / IPOPT is not without its own issues. One main issue is numerical
 ![Reachable Set with numerical artifacts](https://github.com/sseso/rocket-control/blob/main/showcase/Reachable_Set_Buggy.png)
 
 The reason for this is that when $x=0$, $v=0$, and $\theta=0$, the derivative of the cost function with respect to the gimbal angle might be exactly zero, which can cause the solver to get stuck, as any direction for the next step looks equally "bad".
-### The solution: Add a small pertubation (0.0001) to the initial x and v values if they are zero
-This simple fix allowed the solver to converge for the finicky zero-valued initial conditions, though some instability (especially for higher initial values) remains even for non-zero inputs which should be controllable; see below.
+### The solution: regularise $|x|,|v_x|,|v_y| < \varepsilon$ inside the NLP
+`landing.nlp.regularize_initial_state` applies $\varepsilon = 10^{-4}$. This lets IPOPT move off the stationary gimbal gradient. Remaining failures on the grid are empirical solver outcomes, not a proof of uncontrollability.
 
 ![Reachable Set with pertubation fix](https://github.com/sseso/rocket-control/blob/main/showcase/Reachable_Set_Improved.png)
 
