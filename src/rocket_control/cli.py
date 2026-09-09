@@ -179,6 +179,24 @@ def _cmd_attitude(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_grid(args: argparse.Namespace) -> int:
+    from rocket_control.landing import default_landing_problem
+    from rocket_control.landing.grid import run_success_grid, save_grid_plot
+
+    problem = default_landing_problem()
+    print("Empirical landing success map (not a reachable set).")
+    results = run_success_grid(
+        problem,
+        progress=print,
+        verbose_nlp=args.verbose,
+    )
+    n_ok = sum(1 for r in results if r.landing_ok)
+    print(f"Successes: {n_ok}/{len(results)}")
+    save_grid_plot(results, problem, args.output, show=args.show)
+    print(f"Wrote {args.output} and {Path(args.output).with_suffix('.npz')}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -187,8 +205,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "attitude":
         return _cmd_attitude(args)
     if args.cmd == "grid":
-        print("The grid subcommand is added in the experiments pass.")
-        return 1
+        return _cmd_grid(args)
     parser.error(f"unknown command {args.cmd}")
     return 2
 
