@@ -50,16 +50,17 @@ def plot_landing_diagnostics(
         "cyan", "lime", "orange", "red", "blue", "purple",
         "magenta", "gold", "teal", "navy", "brown", "olive",
     ]
-    fig, axs = plt.subplots(12, 1, figsize=(10, 26), sharex=True)
-    plt.subplots_adjust(hspace=0.28)
-    for i, ax in enumerate(axs):
+    fig, axs = plt.subplots(6, 2, figsize=(14, 9), sharex=True, constrained_layout=True)
+    for i, ax in enumerate(axs.flat):
         ax.plot(times, plot_data[i], color=colors[i], lw=1.4)
-        ax.set_ylabel(labels[i], fontsize=11)
+        ax.set_ylabel(labels[i], fontsize=10)
         ax.grid(True, alpha=0.18, ls="--")
-    axs[9].axhspan(-5, 0, facecolor="gray", alpha=0.15)
-    axs[9].axhline(0, color="darkred", lw=1.2, ls="--", alpha=0.7)
-    plt.suptitle("Post-Flight Analysis", fontsize=16, y=0.995)
-    plt.xlabel("Time (s)", fontsize=11)
+    nozzle_ax = axs.flat[9]
+    nozzle_ax.axhspan(-5, 0, facecolor="gray", alpha=0.15)
+    nozzle_ax.axhline(0, color="darkred", lw=1.2, ls="--", alpha=0.7)
+    for ax in axs[-1, :]:
+        ax.set_xlabel("Time (s)", fontsize=11)
+    fig.suptitle("Post-Flight Analysis", fontsize=16)
     if save_path:
         fig.savefig(save_path, dpi=120, bbox_inches="tight")
     if show:

@@ -203,7 +203,5 @@ def animate_landing(
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     ani.save(output_path, writer=FFMpegWriter(fps=fps, bitrate=2500))
-    if show:
-        plt.show()
-    else:
-        plt.close(fig)
+
+    plt.close(fig)

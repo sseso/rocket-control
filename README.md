@@ -29,28 +29,79 @@ IPOPT is usually installed automatically with CasADi when using the pip package,
 
 ## Usage
 
-To change the landing scenario, pass flags.
-
-Default 2D landing (writes `results/landing.mp4` if ffmpeg is available):
 ```bash
+python -m rocket_control <landing|attitude|grid> [flags]
+```
+
+Default run: solve, print a report, write an animation (`ffmpeg` required for mp4). Degrees on the CLI are converted to radians internally. Diagnostics are opt-in via `--plots`.
+
+### Landing
+
+Time-optimal 2D NLP. Default IC: \(x=30\,\mathrm{m}\), nozzle alt \(160.42\,\mathrm{m}\), \(v_x=-8\,\mathrm{m/s}\), \(v_y=-30\,\mathrm{m/s}\), \(\theta=\omega=0\).
+
+| Flag | Meaning |
+|------|---------|
+| `-o, --output MP4` | animation path (default `results/landing.mp4`) |
+| `--x M` | initial horizontal offset from the pad [m] (state \(x\)) |
+| `--alt M` | initial **nozzle** height [m]; state \(y = \mathrm{alt} + d_{\mathrm{com}}\) |
+| `--vx M/S` | initial horizontal velocity [m/s] |
+| `--vy M/S` | initial vertical velocity [m/s] (negative = down) |
+| `--theta-deg DEG` | initial pitch from vertical [deg] |
+| `--omega-deg DEG/S` | initial pitch rate [deg/s] |
+| `--no-anim` | skip the mp4 |
+| `--plots [PNG]` | diagnostic figure: no path opens a window; a path saves a PNG |
+| `--verbose` | IPOPT internals |
+
+```bash
+python -m rocket_control landing
 python -m rocket_control landing -o results/landing.mp4
-```
-Override initial conditions at the CLI (`--theta-deg` / `--omega-deg` are converted to radians internally):
-```bash
-python -m rocket_control landing --x 30 --alt 160 --vx -8 --vy -30 --theta-deg 0 --omega-deg 0 --no-anim
+python -m rocket_control landing --x 30 --alt 160 --vx -8 --vy -30 --theta-deg 0 --omega-deg 0
+python -m rocket_control landing --no-anim --plots
+python -m rocket_control landing --no-anim --plots results/landing_plots.png
+python -m rocket_control landing --verbose --no-anim
 ```
 
-Attitude demo (closed-loop bang-bang gimbal in a vacuum, two views of the same scenario with `--mode dual`):
-```bash
-python -m rocket_control attitude --mode dual --theta0-deg 25 --target-deg 0 --omega0-deg 5
-```
-Modes: `rotation`, `translation`, `dual`. Add `--interactive` to type masses/thrust.
+### Attitude
 
-Empirical landing success map over a grid of `(x, nozzle altitude)`:
+Closed-loop bang-bang gimbal on the **same** vacuum plant (\(g=0\)).
+
+| Flag | Meaning |
+|------|---------|
+| `--mode {rotation,translation,dual}` | `rotation`: body-fixed view; `translation`: free translation; `dual`: both (default `rotation`) |
+| `-o, --output MP4` | animation path (default `results/attitude_<mode>.mp4`) |
+| `--theta0-deg DEG` | initial pitch [deg] (default 20) |
+| `--target-deg DEG` | target pitch [deg] (default 0) |
+| `--omega0-deg DEG/S` | initial pitch rate [deg/s] (default 0) |
+| `--dry-mass KG` | dry mass (default 1250) |
+| `--fuel-mass KG` | fuel mass (default 500) |
+| `--thrust N` | constant thrust (default \(T_{\max}=50000\)) |
+| `--isp S` | specific impulse (default 500) |
+| `--no-anim` | skip the mp4 |
+| `--plots [PNG]` | same as landing |
+| `--verbose` | extra solver / sim chatter |
+
 ```bash
+python -m rocket_control attitude --mode rotation --theta0-deg 25 --target-deg 0 --omega0-deg 5
+python -m rocket_control attitude --mode translation --theta0-deg 25 --target-deg 0
+python -m rocket_control attitude --mode dual --theta0-deg 25 --target-deg 0 --omega0-deg 5 -o results/attitude_dual.mp4
+python -m rocket_control attitude --mode rotation --no-anim --plots
+```
+
+### Grid
+
+Empirical success map over \((x, \text{nozzle altitude})\). Not a reachable set: each cell is heuristic check + IPOPT + landing tolerances (see Numerical / Convergence Issues below).
+
+| Flag | Meaning |
+|------|---------|
+| `-o, --output PNG` | figure path (default `results/success_grid.png`); also writes a `.npz` |
+| `--show` | open the saved figure after writing |
+| `--verbose` | IPOPT internals for every grid point |
+
+```bash
+python -m rocket_control grid
 python -m rocket_control grid -o results/success_grid.png
+python -m rocket_control grid -o results/success_grid.png --show
 ```
-This is not a reachable set; It records whether IPOPT converged to a landing inside tolerances for each sample (see 'Numerical / Convergence Issues' section below).
 
 
 ### Layout
