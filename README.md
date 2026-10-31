@@ -33,11 +33,11 @@ IPOPT is usually installed automatically with CasADi when using the pip package,
 python -m rocket_control <landing|attitude|grid> [flags]
 ```
 
-Default run: solve, print a report, write an animation (`ffmpeg` required for mp4). Degrees on the CLI are converted to radians internally. Diagnostics are opt-in via `--plots`.
+Default run: solve, print a report, write an animation (`ffmpeg` required for mp4). Degrees on the CLI are converted to radians internally. Diagnostics are optional using `--plots`.
 
 ### Landing
 
-Time-optimal 2D NLP. Default IC: \(x=30\,\mathrm{m}\), nozzle alt \(160.42\,\mathrm{m}\), \(v_x=-8\,\mathrm{m/s}\), \(v_y=-30\,\mathrm{m/s}\), \(\theta=\omega=0\).
+Time-optimal 2D NLP. Default initial conditions: $x=30~\mathrm{m}$, nozzle alt $160.42~\mathrm{m}$, $v_x=-8~\mathrm{m/s}$, $v_y=-30~\mathrm{m/s}$, $\theta=\omega=0$.
 
 | Flag | Meaning |
 |------|---------|
@@ -63,7 +63,7 @@ python -m rocket_control landing --verbose --no-anim
 
 ### Attitude
 
-Closed-loop bang-bang gimbal on the **same** vacuum plant (\(g=0\)).
+Closed-loop, bang-bang attitude/gimbal control in zero gravity ($g = 0$).
 
 | Flag | Meaning |
 |------|---------|
@@ -89,7 +89,7 @@ python -m rocket_control attitude --mode rotation --no-anim --plots
 
 ### Grid
 
-Empirical success map over \((x, \text{nozzle altitude})\). Not a reachable set: each cell is heuristic check + IPOPT + landing tolerances (see Numerical / Convergence Issues below).
+Empirical success map over $(x, \text{nozzle altitude})$. Each cell is a heuristic check + IPOPT + landing tolerances (see Numerical / Convergence Issues below).
 
 | Flag | Meaning |
 |------|---------|
